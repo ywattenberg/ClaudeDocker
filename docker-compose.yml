@@ -1,0 +1,6 @@
+services:
+  devbox:
+    build: .
+    ports:
+      - "2222:22"
+    volumes: [] # user adds project mounts here
