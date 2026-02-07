@@ -71,12 +71,16 @@ RUN mkdir -p /run/sshd /etc/ssh/host_keys \
     && printf '\nHostKey /etc/ssh/host_keys/ssh_host_ed25519_key\nHostKey /etc/ssh/host_keys/ssh_host_rsa_key\n' >> /etc/ssh/sshd_config
 
 # ---------- config skeleton (copied to volume on first boot) ----------
-RUN mkdir -p /etc/skel.dev
-COPY --chown=dev:dev config/zsh/.zshrc            /etc/skel.dev/.zshrc
-COPY --chown=dev:dev config/zsh/                   /etc/skel.dev/.config/zsh/
-COPY --chown=dev:dev config/nvim/                  /etc/skel.dev/.config/nvim/
-COPY --chown=dev:dev config/starship/starship.toml /etc/skel.dev/.config/starship.toml
-COPY --chown=dev:dev config/tmux/tmux.conf         /etc/skel.dev/.config/tmux/tmux.conf
+ARG DOTFILES_REPO=https://github.com/wattenberg/dotfiles
+RUN mkdir -p /etc/skel.dev/.config \
+    && git clone ${DOTFILES_REPO} /tmp/dotfiles \
+    && cp -a /tmp/dotfiles/nvim           /etc/skel.dev/.config/nvim \
+    && cp -a /tmp/dotfiles/zsh            /etc/skel.dev/.config/zsh \
+    && cp -a /tmp/dotfiles/tmux           /etc/skel.dev/.config/tmux \
+    && cp -a /tmp/dotfiles/starship.toml  /etc/skel.dev/.config/starship.toml \
+    && rm -rf /tmp/dotfiles \
+    && printf '# Source config\nsource ~/.config/zsh/zshrc\n' > /etc/skel.dev/.zshrc \
+    && chown -R dev:dev /etc/skel.dev
 RUN git clone https://github.com/tmux-plugins/tpm /etc/skel.dev/.config/tmux/plugins/tpm
 
 EXPOSE 22
