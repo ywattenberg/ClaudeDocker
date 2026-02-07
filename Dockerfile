@@ -35,6 +35,9 @@ RUN mkdir -p /usr/share/fonts/nerd-fonts \
     && rm /tmp/JetBrainsMono.zip \
     && fc-cache -fv
 
+# ---------- Kitty terminfo ----------
+COPY config/xterm-kitty /usr/share/terminfo/x/xterm-kitty
+
 # ---------- Starship prompt ----------
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
