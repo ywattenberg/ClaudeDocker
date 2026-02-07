@@ -13,7 +13,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     zsh git cmake ninja-build gdb clang clangd \
     openssh-server curl wget unzip ripgrep fd-find \
     build-essential python3 python3-venv \
-    tmux sudo software-properties-common \
+    tmux sudo \
     fontconfig ncurses-term \
     && rm -rf /var/lib/apt/lists/*
 
@@ -22,9 +22,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# ---------- Neovim (stable from PPA) ----------
-RUN add-apt-repository -y ppa:neovim-ppa/stable \
-    && apt-get update && apt-get install -y neovim \
+# ---------- Neovim (latest stable from GitHub) ----------
+RUN curl -fsSL -o /tmp/nvim-linux-x86_64.tar.gz \
+       "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz" \
+    && tar -xzf /tmp/nvim-linux-x86_64.tar.gz -C /opt \
+    && ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim \
+    && rm /tmp/nvim-linux-x86_64.tar.gz
+
+# ---------- GitHub CLI ----------
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+       -o /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+       > /etc/apt/sources.list.d/github-cli.list \
+    && apt-get update && apt-get install -y gh \
     && rm -rf /var/lib/apt/lists/*
 
 # ---------- Nerd Font (JetBrainsMono) ----------
