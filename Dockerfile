@@ -14,7 +14,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openssh-server curl wget unzip ripgrep fd-find \
     build-essential python3 python3-venv \
     tmux sudo software-properties-common \
-    fontconfig \
+    fontconfig ncurses-term \
     && rm -rf /var/lib/apt/lists/*
 
 # ---------- Node.js 22.x LTS ----------
