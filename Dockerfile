@@ -52,23 +52,23 @@ RUN useradd -m -s /usr/bin/zsh -G sudo dev \
     && echo "dev:${DEV_PASSWORD}" | chpasswd
 
 # ---------- SSH server ----------
-RUN mkdir -p /run/sshd \
+RUN mkdir -p /run/sshd /etc/ssh/host_keys \
     && sed -i 's/#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config \
-    && sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    && sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config \
+    && printf '\nHostKey /etc/ssh/host_keys/ssh_host_ed25519_key\nHostKey /etc/ssh/host_keys/ssh_host_rsa_key\n' >> /etc/ssh/sshd_config
 
-# ---------- TPM (Tmux Plugin Manager) ----------
-RUN git clone https://github.com/tmux-plugins/tpm /home/dev/.config/tmux/plugins/tpm
-
-# ---------- config files ----------
-COPY --chown=dev:dev config/zsh/.zshrc            /home/dev/.zshrc
-COPY --chown=dev:dev config/zsh/                   /home/dev/.config/zsh/
-COPY --chown=dev:dev config/nvim/                  /home/dev/.config/nvim/
-COPY --chown=dev:dev config/starship/starship.toml /home/dev/.config/starship.toml
-COPY --chown=dev:dev config/tmux/tmux.conf         /home/dev/.config/tmux/tmux.conf
-
-# Ensure ownership of everything in /home/dev
-RUN chown -R dev:dev /home/dev
+# ---------- config skeleton (copied to volume on first boot) ----------
+RUN mkdir -p /etc/skel.dev
+COPY --chown=dev:dev config/zsh/.zshrc            /etc/skel.dev/.zshrc
+COPY --chown=dev:dev config/zsh/                   /etc/skel.dev/.config/zsh/
+COPY --chown=dev:dev config/nvim/                  /etc/skel.dev/.config/nvim/
+COPY --chown=dev:dev config/starship/starship.toml /etc/skel.dev/.config/starship.toml
+COPY --chown=dev:dev config/tmux/tmux.conf         /etc/skel.dev/.config/tmux/tmux.conf
+RUN git clone https://github.com/tmux-plugins/tpm /etc/skel.dev/.config/tmux/plugins/tpm
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd", "-D"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]

@@ -1,6 +1,13 @@
 services:
   devbox:
     build: .
+    hostname: devbox
     ports:
       - "2222:22"
-    volumes: [] # user adds project mounts here
+    volumes:
+      - ssh-host-keys:/etc/ssh/host_keys
+      - dev-home:/home/dev
+
+volumes:
+  ssh-host-keys:
+  dev-home:
