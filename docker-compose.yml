@@ -7,8 +7,13 @@ services:
     volumes:
       - ssh-host-keys:/etc/ssh/host_keys
       - dev-home:/home/dev
+      - ~/repos:/home/dev/projects
       - ~/.ssh:/run/host-ssh:ro
 
 volumes:
   ssh-host-keys:
+    external: true
+    name: docker_ssh-host-keys
   dev-home:
+    external: true
+    name: docker_dev-home

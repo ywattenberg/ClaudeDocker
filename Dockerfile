@@ -56,7 +56,8 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
     && uv tool install ty
 
 # ---------- Claude Code (native installer) ----------
-RUN curl -fsSL https://claude.ai/install.sh | bash
+RUN curl -fsSL https://claude.ai/install.sh | bash \
+    && cp /root/.local/bin/claude /usr/local/bin/claude
 
 # ---------- user setup ----------
 RUN useradd -m -s /usr/bin/zsh -G sudo dev \
