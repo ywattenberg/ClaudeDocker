@@ -11,10 +11,10 @@ if [ ! -f /home/dev/.zshrc ]; then
     chown -R dev:dev /home/dev
 fi
 
-# Set up authorized_keys from mounted key on first boot
-if [ ! -f /home/dev/.ssh/authorized_keys ] && [ -f /run/user-ssh/authorized_keys ]; then
+# Build authorized_keys from host's public keys on every boot
+if ls /run/host-ssh/*.pub &>/dev/null; then
     mkdir -p /home/dev/.ssh
-    cp /run/user-ssh/authorized_keys /home/dev/.ssh/authorized_keys
+    cat /run/host-ssh/*.pub > /home/dev/.ssh/authorized_keys
     chmod 700 /home/dev/.ssh
     chmod 600 /home/dev/.ssh/authorized_keys
     chown -R dev:dev /home/dev/.ssh

@@ -7,7 +7,7 @@ services:
     volumes:
       - ssh-host-keys:/etc/ssh/host_keys
       - dev-home:/home/dev
-      - ~/.ssh/authorized_keys:/run/user-ssh/authorized_keys:ro
+      - ~/.ssh:/run/host-ssh:ro
 
 volumes:
   ssh-host-keys:
