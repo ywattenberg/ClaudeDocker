@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose build:*)",
+      "Bash(git -C /home/watten/repos/ClaudeDocker diff)",
+      "Bash(git -C /home/watten/repos/ClaudeDocker log --oneline -5)",
+      "Bash(docker compose:*)",
+      "Bash(ssh-keygen:*)",
+      "Bash(git -C /home/watten/repos/ClaudeDocker add docker-compose.yml entrypoint.sh)",
+      "Bash(git -C /home/watten/repos/ClaudeDocker commit -m \"$\\(cat <<''EOF''\nFix SSH auth by using host public keys instead of authorized_keys\n\nThe previous setup mounted ~/.ssh/authorized_keys, which contains keys\nauthorized to log into the host, not keys from the host. Now mounts\nthe entire ~/.ssh directory \\(read-only\\) and builds authorized_keys\nfrom all *.pub files on every boot.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C /home/watten/repos/ClaudeDocker status)",
+      "Bash(git -C /home/watten/repos/ClaudeDocker push origin rich-text)",
+      "Bash(docker run:*)",
+      "Bash(ssh:*)",
+      "Bash(docker volume rm:*)"
+    ]
+  }
+}
