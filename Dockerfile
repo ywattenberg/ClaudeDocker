@@ -13,6 +13,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential python3 python3-venv \
     tmux sudo \
     fontconfig ncurses-term \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # ---------- Node.js 22.x LTS ----------
@@ -86,8 +87,16 @@ RUN [ ! -d /etc/skel.dev/.config/tmux/plugins/tpm ] \
     && git clone https://github.com/tmux-plugins/tpm /etc/skel.dev/.config/tmux/plugins/tpm \
     || true
 
+# ---------- Discord Command Runner ----------
+ARG DCR_REPO=https://github.com/ywattenberg/DiscordCommandRunner.git
+ARG DS_REPO=https://github.com/ywattenberg/DiscordSkill.git
+RUN mkdir -p /opt/discord-repos \
+    && git clone ${DCR_REPO} /opt/discord-repos/DiscordCommandRunner \
+    && git clone ${DS_REPO} /opt/discord-repos/DiscordSkill
+
 EXPOSE 22
 
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

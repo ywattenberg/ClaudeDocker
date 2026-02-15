@@ -28,4 +28,12 @@ if ls /run/host-ssh/*.pub &>/dev/null; then
     chown -R dev:dev /home/dev/.ssh
 fi
 
-exec /usr/sbin/sshd -D
+# Seed Discord repos from image if not present in projects
+for repo in DiscordCommandRunner DiscordSkill; do
+    if [ ! -d "/home/dev/projects/$repo" ]; then
+        cp -a "/opt/discord-repos/$repo" "/home/dev/projects/$repo"
+        chown -R dev:dev "/home/dev/projects/$repo"
+    fi
+done
+
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
