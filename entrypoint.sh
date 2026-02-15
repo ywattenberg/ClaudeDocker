@@ -11,4 +11,13 @@ if [ ! -f /home/dev/.zshrc ]; then
     chown -R dev:dev /home/dev
 fi
 
+# Set up authorized_keys from mounted key on first boot
+if [ ! -f /home/dev/.ssh/authorized_keys ] && [ -f /run/user-ssh/authorized_keys ]; then
+    mkdir -p /home/dev/.ssh
+    cp /run/user-ssh/authorized_keys /home/dev/.ssh/authorized_keys
+    chmod 700 /home/dev/.ssh
+    chmod 600 /home/dev/.ssh/authorized_keys
+    chown -R dev:dev /home/dev/.ssh
+fi
+
 exec /usr/sbin/sshd -D

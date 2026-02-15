@@ -1,7 +1,5 @@
 FROM ubuntu:24.04
 
-ARG DEV_PASSWORD=dev
-
 # ---------- locale ----------
 RUN apt-get update && apt-get install -y locales \
     && sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen \
@@ -57,17 +55,19 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
     && uv tool install ruff \
     && uv tool install ty
 
-# ---------- Claude Code ----------
-RUN npm install -g @anthropic-ai/claude-code
+# ---------- Claude Code (native installer) ----------
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
 # ---------- user setup ----------
 RUN useradd -m -s /usr/bin/zsh -G sudo dev \
-    && echo "dev:${DEV_PASSWORD}" | chpasswd
+    && passwd -l dev
 
 # ---------- SSH server ----------
 RUN mkdir -p /run/sshd /etc/ssh/host_keys \
     && sed -i 's/#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config \
-    && sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config \
+    && sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config \
+    && sed -i 's/#\?KbdInteractiveAuthentication.*/KbdInteractiveAuthentication no/' /etc/ssh/sshd_config \
+    && sed -i 's/#\?PubkeyAuthentication.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config \
     && printf '\nHostKey /etc/ssh/host_keys/ssh_host_ed25519_key\nHostKey /etc/ssh/host_keys/ssh_host_rsa_key\n' >> /etc/ssh/sshd_config
 
 # ---------- config skeleton (copied to volume on first boot) ----------
