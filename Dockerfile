@@ -62,7 +62,9 @@ RUN npm install -g @anthropic-ai/claude-code
 
 # ---------- user setup ----------
 RUN useradd -m -s /usr/bin/zsh -G sudo dev \
-    && echo "dev:${DEV_PASSWORD}" | chpasswd
+    && echo "dev:${DEV_PASSWORD}" | chpasswd \
+    && echo "dev ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/dev \
+    && chmod 0440 /etc/sudoers.d/dev
 
 # ---------- SSH server ----------
 RUN mkdir -p /run/sshd /etc/ssh/host_keys \

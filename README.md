@@ -9,7 +9,9 @@ A Docker-based development environment with SSH access, pre-configured with Neov
 | Username | `dev` |
 | Password | `dev` |
 
-The password can be changed at build time by passing the `DEV_PASSWORD` build argument:
+The `dev` user has **passwordless sudo** — you can run `sudo` commands without entering a password.
+
+The SSH password can be changed at build time by passing the `DEV_PASSWORD` build argument:
 
 ```bash
 docker build --build-arg DEV_PASSWORD=mysecretpassword -t claudedocker .
